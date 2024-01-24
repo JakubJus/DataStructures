@@ -1,0 +1,67 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Main extends JFrame {
+    private JTextField infixTextField;
+    private JTextArea resultTextArea;
+
+    public Main() {
+        // Set up the frame
+        setTitle("Infix Expression Evaluator");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // Center the window
+
+        // Create components
+        infixTextField = new JTextField();
+        resultTextArea = new JTextArea();
+        JButton evaluateButton = new JButton("Evaluate");
+
+        // Set layout
+        setLayout(new BorderLayout());
+
+        // Add components to the frame
+        add(infixTextField, BorderLayout.NORTH);
+        add(new JScrollPane(resultTextArea), BorderLayout.CENTER);
+        add(evaluateButton, BorderLayout.SOUTH);
+
+        // Attach action listener to the button
+        evaluateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                evaluateExpression();
+            }
+        });
+    }
+
+    private void evaluateExpression() {
+        InFix infixConverter = new InFix();
+        Postfix evaluator = new Postfix();
+
+        String infixExpression = infixTextField.getText();
+
+        try {
+            String postfixExpression = infixConverter.convert(infixExpression);
+            int result = evaluator.eval(postfixExpression);
+            resultTextArea.append("Infix Expression: " + infixExpression + "\n");
+            resultTextArea.append("Postfix Expression: " + postfixExpression + "\n");
+            resultTextArea.append("Result: " + result + "\n\n");
+        } catch (InFix.SyntaxErrorException | Postfix.SyntaxErrorException ex) {
+            resultTextArea.append("Syntax Error: " + ex.getMessage() + "\n\n");
+        }
+
+        // Clear the text field for the next input
+        infixTextField.setText("");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new Main().setVisible(true);
+            }
+        });
+    }
+}
