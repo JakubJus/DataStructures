@@ -1,0 +1,65 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+public class Main extends JFrame {
+    private JTextField infixTextField;
+    private JTextArea resultTextArea;
+
+    public Main() {
+        this.setTitle("Infix Expression Evaluator");
+        this.setSize(400, 200);
+        this.setDefaultCloseOperation(3);
+        this.setLocationRelativeTo((Component)null);
+        this.infixTextField = new JTextField();
+        this.resultTextArea = new JTextArea();
+        JButton evaluateButton = new JButton("Evaluate");
+        this.setLayout(new BorderLayout());
+        this.add(this.infixTextField, "North");
+        this.add(new JScrollPane(this.resultTextArea), "Center");
+        this.add(evaluateButton, "South");
+        evaluateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Main.this.evaluateExpression();
+            }
+        });
+    }
+
+    private void evaluateExpression() {
+        InFix infixConverter = new InFix();
+        Postfix evaluator = new Postfix();
+        String infixExpression = this.infixTextField.getText();
+
+        try {
+            String postfixExpression = infixConverter.convert(infixExpression);
+            int result = evaluator.eval(postfixExpression);
+            this.resultTextArea.append("Infix Expression: " + infixExpression + "\n");
+            this.resultTextArea.append("Postfix Expression: " + postfixExpression + "\n");
+            this.resultTextArea.append("Result: " + result + "\n\n");
+        } catch (Postfix$SyntaxErrorException | InFix$SyntaxErrorException var6) {
+            this.resultTextArea.append("Syntax Error: " + var6.getMessage() + "\n\n");
+        }
+
+        this.infixTextField.setText("");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                (new Main()).setVisible(true);
+            }
+        });
+    }
+}
